@@ -24,26 +24,15 @@ public class BookDetails extends JFrame{
 	private DefaultListModel<String> books;
 	private JButton addToCheckout;
 	private JButton cancelView;
-	private int index;
-	private String searchTerm;
 	private String history0;
-	private String history1;
-	private String history2;
-	private String history3;
-	private String author0;
-	private String author1;
-	private String author2;
-	private String year0;
-	private String year1;
-	private String year2;
-	private String genre0;
-	private String genre1;
 	private CheckoutView cv;
+	private DatabaseSearch dbs;
+	private int index;
 	
-	public BookDetails(int indx, String srchTrm, CheckoutView chckVw) {
-		index = indx;
-		searchTerm = srchTrm;
+	public BookDetails(DatabaseSearch dbsearch, CheckoutView chckVw, int index) {
 		cv = chckVw;
+		dbs = dbsearch;
+		this.index = index;
 
 		setSize(800,400);
 		setTitle("Detailed Information");
@@ -68,138 +57,7 @@ public class BookDetails extends JFrame{
 									+ "<br/>Location: Aisle 5, Section 4"
 									+ "<br/>----------------------------------------------</html>";
 		
-		history1 = "<html>Title: History of Everything"
-									+ "<br/>Author: Steven Savage"
-									+ "<br/>Genre: Fantasy"
-									+ "<br/>Year: 1974"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 3"
-									+ "<br/>Location: Aisle 5, Section 2"
-									+ "<br/>----------------------------------------------<html>";
-		
-		history2 = "<html>Title: Unicorns or Rhinos?: A True History"
-									+ "<br/>Author: Dweezil High"
-									+ "<br/>Genre: Autobiography"
-									+ "<br/>Year: 1963"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 7"
-									+ "<br/> Location: Aisle 1, Section 8"
-									+ "</br/>----------------------------------------------</html>";
-		
-		history3 = "<html>Title: Untold History of the Comma"
-									+ "<br/>Author: Phyllis Stenbacker"
-									+ "<br/>Genre: Non-Fiction"
-									+ "<br/>Year: 1928"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 2"
-									+ "<br/>Location: Aisle 3, Section 10"
-									+ "<br/>----------------------------------------------</html>";
-		
-		author0 = "<html>Title: The Neo-Age"
-									+ "<br/>Author: Hugo Smith"
-									+ "<br/>Genre: Science Fiction"
-									+ "<br/>Year: 1991"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 9"
-									+ "<br/>Location: Aisle 6, Section 10"
-									+ "<br/>----------------------------------------------</html>";
-		
-		author1 = "<html>Title: Reprogram Yourself to a Better You"
-									+ "<br/>Author: Hugo Smith"
-									+ "<br/>Genre: Science Fiction"
-									+ "<br/>Year: 1998"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 6"
-									+ "<br/>Location: Aisle 6, Section 10"
-									+ "<br/>----------------------------------------------</html>";
-		
-		author2 = "<html>Title: The White Rabbit"
-									+ "<br/>Author: Hugo Smith"
-									+ "<br/>Genre: Science Fiction"
-									+ "<br/>Year: 1993"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 4"
-									+ "<br/>Location: Aisle 6, Section 10"
-									+ "<br/>----------------------------------------------</html>";
-		
-		year0 = "<html>Title: How to Plow Your Field and Make Friends"
-									+ "<br/>Author: Gayle Hall"
-									+ "<br/>Genre: Self-Help"
-									+ "<br/>Year: 1875"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 10"
-									+ "<br/>Location: Aisle 1, Section 2"
-									+ "<br/>----------------------------------------------</html>";
-		
-		year1 = "<html>Title: Lincoln: President or Vampire?"
-									+ "<br/>Author: Definitely Human"
-									+ "<br/>Genre: Science Fiction"
-									+ "<br/>Year: 1875"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 33"
-									+ "<br/>Location: Aisle 6, Section 6"
-									+ "<br/>----------------------------------------------</html>";
-		
-		year2 = "<html>Title: How to Learn English Gooder"
-									+ "<br/>Author: Nom Chimskey"
-									+ "<br/>Genre: Thriller"
-									+ "<br/>Year: 1875"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 58"
-									+ "<br/>Location: Aisle 15, Section 3"
-									+ "<br/>----------------------------------------------</html>";
-		
-		genre0 = "<html>Title: Shirtless Man Gazers"
-									+ "<br/>Author: Seetay Hom Mader"
-									+ "<br/>Genre: Romance"
-									+ "<br/>Year: 1995"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 22"
-									+ "<br/>Location: Aisle 13, Section 5"
-									+ "<br/>----------------------------------------------</html>";
-		
-		genre1 = "<html>Title: Only the Flashiest Win"
-									+ "<br/>Author: Ima Bird"
-									+ "<br/>Genre: Romance"
-									+ "<br/>Year: 2075"
-									+ "<br/>---------------"
-									+ "<br/>Available Copies: 18"
-									+ "<br/>Location: Aisle 13, Section 1"
-									+ "<br/>----------------------------------------------</html>";
-		
-		if(searchTerm.equalsIgnoreCase("history")) {
-			if(index == 0) {
-				books.addElement(history0);
-			}else if(index == 1) {
-				books.addElement(history1);
-			}else if(index == 2) {
-				books.addElement(history2);
-			}else if(index == 3) {
-				books.addElement(history3);
-			}
-		}if(searchTerm.equalsIgnoreCase("smith")) {
-			if(index == 0) {
-				books.addElement(author0);
-			}else if(index == 1) {
-				books.addElement(author1);
-			}else if(index == 2) {
-				books.addElement(author2);
-			}
-		}else if(searchTerm.equalsIgnoreCase("1875")) {
-			if(index == 0) {
-				books.addElement(year0);
-			}else if(index == 1) {
-				books.addElement(year1);
-			}else if(index == 2) {
-				books.addElement(year2);
-			}
-		}else if(searchTerm.equalsIgnoreCase("romance")) {
-			if(index == 0) {
-				books.addElement(genre0);
-			}else if(index == 1) {
-				books.addElement(genre1);
-			}
-		}
+		books.addElement(dbs.getDetails(index));
 		
 		//detailArea = new JTextArea();
 		addToCheckout = new JButton("Add to Cart");

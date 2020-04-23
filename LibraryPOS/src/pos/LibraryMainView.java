@@ -10,10 +10,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import javax.swing.*;
 
-public class LibraryMainView extends JFrame{
+import java.util.Observable;
+import java.util.Observer;
+
+public class LibraryMainView extends JFrame implements Observer{
 	/**
 	 * 
 	 */
@@ -38,8 +40,11 @@ public class LibraryMainView extends JFrame{
 	private String searchTerm;
 	public static JList<String> checkoutList;
 	public static DefaultListModel<String> checkedout;
+
 	
 	private CheckoutView cv;
+	private DatabaseSearch dbs;
+	
 
 	public LibraryMainView() {
 		setSize(1000,600);
@@ -79,6 +84,9 @@ public class LibraryMainView extends JFrame{
 		setSize(1000,600);
 		
 		cv = new CheckoutView();
+		dbs = new DatabaseSearch();
+		
+		dbs.addObserver(this);
 	}
 
 	public JPanel SearchView() {
@@ -174,50 +182,38 @@ public class LibraryMainView extends JFrame{
 	private class ButtonHandler implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e){
 			if(e.getActionCommand().equals("Book Details")) {
 				int index = bookList.getSelectedIndex(); // Index starts at 0 for first element
-				BookDetails bd = new BookDetails(index, searchTerm, cv);
+				BookDetails bd = new BookDetails(dbs, cv, index);
 				bd.setVisible(true);
-			}else if(e.getActionCommand().equals("Search Library")) {
-					books.clear();
-				if(titleField.getText().equalsIgnoreCase("History")) {
-					books.addElement("<html>Title: History in Action: A Look back at the 2570s<br/>Author: Moonunit Ziffer<br/>Genre: Fantasy<br/>Year: 2974<br/>---------------</html>");
-					books.addElement("<html>Title: History of Everything<br/>Author: Steven Savage<br/>Genre: Fantasy<br/>Year: 1974<br/>---------------</html>");
-					books.addElement("<html>Title: Unicorns or Rhinos?: A True History<br/>Author: Dweezil High<br/>Genre: Autobiography<br/>Year: 1963<br/>---------------</html>");
-					books.addElement("<html>Title: Untold History of the Comma<br/>Author: Phyllis Stenbacker<br/>Genre: Non-Fiction<br/>Year: 1928<br/>---------------</html>");
-					
-					searchTerm = titleField.getText();
-					titleField.setText("");
-				}else if(authorField.getText().equalsIgnoreCase("Smith")) {
-					books.addElement("<html>Title: The Neo-Age<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1991<br/>---------------</html>");
-					books.addElement("<html>Title: Reprogram Yourself to a Better You<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1998<br/>---------------</html>");
-					books.addElement("<html>Title: The White Rabbit<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1993<br/>---------------</html>");
-
-					searchTerm = authorField.getText();
-					authorField.setText("");
-				}else if(yearField.getText().equalsIgnoreCase("1875")) {
-					books.addElement("<html>Title: How to Plow Your Field and Make Friends<br/>Author: Gayle Hall<br/>Genre: Self-Help<br/>Year: 1875<br/>---------------</html>");
-					books.addElement("<html>Title: Lincoln: President or Vampire?<br/>Author: Definitely Human<br/>Genre: Science Fiction<br/>Year: 1875<br/>---------------</html>");
-					books.addElement("<html>Title: How to Learn English Gooder<br/>Author: Nom Chimskey<br/>Genre: Thriller<br/>Year: 1875<br/>---------------</html>");
-
-					searchTerm = yearField.getText();
-					yearField.setText("");
-				}else if(genreField.getText().equalsIgnoreCase("Romance")) {
-					books.addElement("<html>Title: Shirtless Man Gazers<br/>Author: Seetay Hom Mader<br/>Genre: Romance<br/>Year: 1995<br/>---------------</html>");
-					books.addElement("<html>Title: Only the Flashiest Win<br/>Author: Ima Bird<br/>Genre: Romance<br/>Year: 2075<br/>---------------</html>");
-					
-					searchTerm = genreField.getText();
-					genreField.setText("");
-				}else {
-					books.addElement("No books match your search terms");
-					
-					titleField.setText("");
-					authorField.setText("");
-					yearField.setText("");
-					genreField.setText("");
-				}
 			}
+
+			if(e.getActionCommand().equals("Search Library")) {
+				books.clear();
+
+				String genre = genreField.getText();
+				String author = authorField.getText();
+				String title = titleField.getText();
+				String year = yearField.getText();
+
+				if(!genreField.getText().isEmpty()) {
+					dbs.searchDB("genre", genre);
+					genreField.setText("");
+				}else if(!authorField.getText().isEmpty()) {
+					dbs.searchDB("author", author);
+					authorField.setText("");
+				}else if(!titleField.getText().isEmpty()) {
+					dbs.searchDB("title", title);
+					titleField.setText("");
+				}else if(!yearField.getText().isEmpty()) {
+					dbs.searchDB("year", year);
+					yearField.setText("");
+				}
+
+					
+				}
+
 		}
 	}
 	
@@ -244,5 +240,12 @@ public class LibraryMainView extends JFrame{
 		Image image = ico.getImage(); // transform it
 		Image newimg = image.getScaledInstance(i, j, Image.SCALE_SMOOTH); // scale it the smooth way
 		return new ImageIcon(newimg); // transform it ack
+	}
+
+	@Override
+	public void update(Observable arg0, Object bookEntry) {
+		// TODO Auto-generated method stub
+		books.addElement((String) bookEntry);
+		
 	}
 }

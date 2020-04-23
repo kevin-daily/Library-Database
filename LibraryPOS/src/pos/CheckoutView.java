@@ -39,7 +39,7 @@ public class CheckoutView extends JFrame{
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
-		JLabel background = new JLabel(makeIcon("pfw-logo.jpg",300,300));
+		JLabel background = new JLabel(makeIcon("pfw-logo.jpg",200,200));
 		//mainPanel.add(background, BorderLayout.CENTER);
 		
 		JPanel westPanel = new JPanel();
