@@ -10,12 +10,16 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import javax.swing.*;
 
-public class LibraryMainView extends JFrame{
+import java.util.Observable;
+import java.util.Observer;
+
+public class LibraryMainView extends JFrame implements Observer{
 	/**
-	 * 
+	 * Class is responsible for drawing the main program window which
+	 * allows the user to search for books and displays the search
+	 * panel and search result panel
 	 */
 	private static final long serialVersionUID = -6539806486055104819L;
 	// SearchView Fields
@@ -23,30 +27,38 @@ public class LibraryMainView extends JFrame{
 	private JTextField authorField;
 	private JTextField yearField;
 	private JTextField genreField;
-	private JLabel titleLabel;
-	private JLabel authorLabel;
-	private JLabel yearLabel;
-	private JLabel genreLabel;
-	private JButton findBook;
+	//private JLabel titleLabel;
+	//private JLabel authorLabel;
+	//private JLabel yearLabel;
+	//private JLabel genreLabel;
+	//private JButton findBook;
 
 	// BookList Fields
 	private DefaultListModel<String> books;
 	private JList<String> bookList;
-	private JButton detailedView;
+	//private JButton detailedView;
 	//private JTextArea bookSearchList;
 	
-	private String searchTerm;
-	public static JList<String> checkoutList;
-	public static DefaultListModel<String> checkedout;
+	//private String searchTerm;
+	//public static JList<String> checkoutList;
+	//public static DefaultListModel<String> checkedout;
 	
 	private CheckoutView cv;
+	private DatabaseSearch dbs;
+	
 
-	public LibraryMainView() {
+	/*
+	 * Constructor that sets up the main window and combines
+	 * the various panels to create the main view
+	 * @param dbs DatabaseSearch class created in LoginView
+	 */
+	public LibraryMainView(DatabaseSearch dbs) {
+		this.dbs = dbs;
 		setSize(1000,600);
 		setTitle("Welcome to the Library");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		
+		// Menu creation
 		JMenuBar jmb = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -59,29 +71,44 @@ public class LibraryMainView extends JFrame{
 		fileMenu.add(logOut);
 		fileMenu.add(exitItem);
 
+		// Add the menu items
 		jmb.add(fileMenu);
 		jmb.add(viewCart);
 		
 		//BookList bl = new BookList();
 		//SearchView sv = new SearchView();	
 		
+		// Add components to the main window
 		getContentPane().add(jmb, BorderLayout.NORTH);
 		getContentPane().add(BookList(), BorderLayout.EAST);
 		getContentPane().add(SearchView(), BorderLayout.CENTER);
 		
 		
+		// Instantiate action handler and add elements
 		ActionHandler ah = new ActionHandler();
 		exitItem.addActionListener(ah);
 		logOut.addActionListener(ah);
 		viewCart.addActionListener(ah);
 
+		// Set size of window
 		setSize(999,599);
 		setSize(1000,600);
 		
-		cv = new CheckoutView();
+		// Instantiate new CheckoutView class and pass 
+		// DataBaseSearch class as parameter
+		cv = new CheckoutView(dbs);
+		
+		// Add this window as an observer to DataBaseSearch for
+		// displaying results of database searches
+		dbs.addObserver(this);
 	}
 
+	/*
+	 * Panel responsible for holding the search components of the program
+	 * @return	JPanel for use by the main window 
+	 */
 	public JPanel SearchView() {
+		// Instantiate the panel, set the layout, and the background image
 		JPanel searchPanel = new JPanel();
 		searchPanel.setLayout(new BorderLayout());
 		JLabel background = new JLabel(makeIcon("pfw-logo.jpg",400,300));
@@ -91,25 +118,26 @@ public class LibraryMainView extends JFrame{
 		
 		// Title text field and label
 		titleField = new JTextField(50);
-		titleLabel = new JLabel("Book Title: ");
+		JLabel titleLabel = new JLabel("Book Title: ");
 		titleLabel.setLabelFor(titleField);
 
 		// Author text field and label
 		authorField = new JTextField(50);
-		authorLabel = new JLabel("Book Author: ");
+		JLabel authorLabel = new JLabel("Book Author: ");
 		authorLabel.setLabelFor(authorField);
 
 		// Year text field and label
 		yearField = new JTextField(50);
-		yearLabel = new JLabel("Book Publication Year: ");
+		JLabel yearLabel = new JLabel("Book Publication Year: ");
 		yearLabel.setLabelFor(yearField);
 
 		// Genre text field and label
 		genreField = new JTextField(50);
-		genreLabel = new JLabel("Book Genre: ");
+		JLabel genreLabel = new JLabel("Book Genre: ");
 		genreLabel.setLabelFor(genreField);
 		
-		findBook = new JButton("Search Library");
+		// Button for searching database
+		JButton findBook = new JButton("Search Library");
 		ButtonHandler bh = new ButtonHandler();
 		findBook.addActionListener(bh);
 		
@@ -122,12 +150,21 @@ public class LibraryMainView extends JFrame{
 		JTextField[] textFields = {titleField, authorField, yearField, genreField};
 		addLabelTextRows(labels, textFields, gridBag, textPanel);
 		
+		// Add subpanels to the main panel
 		searchPanel.add(textPanel, BorderLayout.CENTER);
 		searchPanel.add(findBook, BorderLayout.SOUTH);
 		
 		return searchPanel;
 	}
 	
+	/*
+	 * Private method to match labels with the fields for user search input terms
+	 *
+	 * @param labels Array of JLabel elements
+	 * @param textFields Array of JTextField elements
+	 * @param gridBad GridBadLayout element
+	 * @param container Container element for holding labels and fields
+	 */
 	private void addLabelTextRows(JLabel[] labels, JTextField[] textFields, GridBagLayout gridBag, Container container) {
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.EAST;
@@ -148,6 +185,12 @@ public class LibraryMainView extends JFrame{
 		}
 	}
 	
+	/*
+	 * Method responsible for creating a JPanel that holds the elements making up the 
+	 * display of the results of the database search
+	 *
+	 * @return	JPanel that makes up the search result display for the main window
+	 */
 	public JPanel BookList() {
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BorderLayout());
@@ -159,7 +202,7 @@ public class LibraryMainView extends JFrame{
 		scroll.setPreferredSize(new Dimension(400,500));
 		scroll.setBackground(Color.white);
 		
-		detailedView = new JButton("Book Details");
+		JButton detailedView = new JButton("Book Details");
 
 		ButtonHandler bh = new ButtonHandler();
 		detailedView.addActionListener(bh);
@@ -171,78 +214,96 @@ public class LibraryMainView extends JFrame{
 		return listPanel;
 	}
 	
+	// Used to control reactions to presses of buttons by user
 	private class ButtonHandler implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e){
+
+			// If user clicks "Book Details" button, get the index of the selected JList
+			// element, and pass the index, DataBaseSearch class, and CheckoutView class
+			// as arguments to a newly instantiated BookDetails class.
+			//
+			// Then make the BookDetails window visible to the user
 			if(e.getActionCommand().equals("Book Details")) {
 				int index = bookList.getSelectedIndex(); // Index starts at 0 for first element
-				BookDetails bd = new BookDetails(index, searchTerm, cv);
+				BookDetails bd = new BookDetails(dbs, cv, index);
 				bd.setVisible(true);
-			}else if(e.getActionCommand().equals("Search Library")) {
-					books.clear();
-				if(titleField.getText().equalsIgnoreCase("History")) {
-					books.addElement("<html>Title: History in Action: A Look back at the 2570s<br/>Author: Moonunit Ziffer<br/>Genre: Fantasy<br/>Year: 2974<br/>---------------</html>");
-					books.addElement("<html>Title: History of Everything<br/>Author: Steven Savage<br/>Genre: Fantasy<br/>Year: 1974<br/>---------------</html>");
-					books.addElement("<html>Title: Unicorns or Rhinos?: A True History<br/>Author: Dweezil High<br/>Genre: Autobiography<br/>Year: 1963<br/>---------------</html>");
-					books.addElement("<html>Title: Untold History of the Comma<br/>Author: Phyllis Stenbacker<br/>Genre: Non-Fiction<br/>Year: 1928<br/>---------------</html>");
-					
-					searchTerm = titleField.getText();
-					titleField.setText("");
-				}else if(authorField.getText().equalsIgnoreCase("Smith")) {
-					books.addElement("<html>Title: The Neo-Age<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1991<br/>---------------</html>");
-					books.addElement("<html>Title: Reprogram Yourself to a Better You<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1998<br/>---------------</html>");
-					books.addElement("<html>Title: The White Rabbit<br/>Author: Hugo Smith<br/>Genre: Science Fiction<br/>Year: 1993<br/>---------------</html>");
-
-					searchTerm = authorField.getText();
-					authorField.setText("");
-				}else if(yearField.getText().equalsIgnoreCase("1875")) {
-					books.addElement("<html>Title: How to Plow Your Field and Make Friends<br/>Author: Gayle Hall<br/>Genre: Self-Help<br/>Year: 1875<br/>---------------</html>");
-					books.addElement("<html>Title: Lincoln: President or Vampire?<br/>Author: Definitely Human<br/>Genre: Science Fiction<br/>Year: 1875<br/>---------------</html>");
-					books.addElement("<html>Title: How to Learn English Gooder<br/>Author: Nom Chimskey<br/>Genre: Thriller<br/>Year: 1875<br/>---------------</html>");
-
-					searchTerm = yearField.getText();
-					yearField.setText("");
-				}else if(genreField.getText().equalsIgnoreCase("Romance")) {
-					books.addElement("<html>Title: Shirtless Man Gazers<br/>Author: Seetay Hom Mader<br/>Genre: Romance<br/>Year: 1995<br/>---------------</html>");
-					books.addElement("<html>Title: Only the Flashiest Win<br/>Author: Ima Bird<br/>Genre: Romance<br/>Year: 2075<br/>---------------</html>");
-					
-					searchTerm = genreField.getText();
-					genreField.setText("");
-				}else {
-					books.addElement("No books match your search terms");
-					
-					titleField.setText("");
-					authorField.setText("");
-					yearField.setText("");
-					genreField.setText("");
-				}
 			}
+
+			// If user clicks the Search Library button, pull the input from each of the
+			// search fields. Check which isn't empty and send the input and the field
+			// label to the DataBaseSearch searchDB() method for searching. 
+			if(e.getActionCommand().equals("Search Library")) {
+				books.clear();
+
+				String genre = genreField.getText();
+				String author = authorField.getText();
+				String title = titleField.getText();
+				String year = yearField.getText();
+
+				if(!genreField.getText().isEmpty()) {
+					dbs.searchDB("genre", genre);
+					genreField.setText("");
+				}else if(!authorField.getText().isEmpty()) {
+					dbs.searchDB("author", author);
+					authorField.setText("");
+				}else if(!titleField.getText().isEmpty()) {
+					dbs.searchDB("title", title);
+					titleField.setText("");
+				}else if(!yearField.getText().isEmpty()) {
+					dbs.searchDB("year", year);
+					yearField.setText("");
+				}
+
+					
+				}
+
 		}
 	}
 	
 	
+	// Used to control reactions to menu items selected by user
 	private class ActionHandler implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			// Exits the program
 			if(e.getActionCommand().equals("Exit")) {
 				System.exit(0);
+			// Instantiates a new login, makes it visible, and closes
+			// this window
 			}else if(e.getActionCommand().equals("Logout")) {
 				LoginView loginFrame = new LoginView();	
 				loginFrame.setVisible(true);
 				dispose();
+			// Opens the checkout view without adding a book
 			}else if(e.getActionCommand().equals("View Cart")) {
 				cv.setVisible(true);
 			}
 		}
 	}
 	
+	/*
+	 * Method designed to take an image and size it as an icon
+	 * @param img String containing the path to the image 
+	 * @param i desired height of the icon
+	 * @param j desired width of the icon
+	 *
+	 * @return	ImageIcon created by method
+	 */
 	private ImageIcon makeIcon(String img, int i, int j) {
 		// The process of scaling an image
 		ImageIcon ico = new ImageIcon(img);
 		Image image = ico.getImage(); // transform it
 		Image newimg = image.getScaledInstance(i, j, Image.SCALE_SMOOTH); // scale it the smooth way
 		return new ImageIcon(newimg); // transform it ack
+	}
+
+	@Override
+	public void update(Observable arg0, Object bookEntry) {
+		// TODO Auto-generated method stub
+		books.addElement((String) bookEntry);
+		
 	}
 }

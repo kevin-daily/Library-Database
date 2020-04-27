@@ -39,7 +39,7 @@ public class SearchView extends JPanel {
 		authorLabel = new JLabel("Book Author: ");
 		authorLabel.setLabelFor(authorField);
 
-		// Barcode text field and label
+		// Year text field and label
 		yearField = new JTextField(50);
 		yearLabel = new JLabel("Book Publication Year: ");
 		yearLabel.setLabelFor(yearField);
