@@ -11,7 +11,7 @@
 	}	
 	body
 	{
-		background-image: url("purdue-fort-wayne-logo.jpg");
+		background-image: url("purdue-fort-wayne-logo.png");
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
 		background-color: black;
@@ -106,7 +106,7 @@
 		<a href="index.html">Logout</a>
 	</div>
 	
-	<table class="tabl hd red">
+	<table class="tab hd red">
 		<tr>
 			<td>Book Successfully Renewed</td>
 		</tr>

@@ -11,7 +11,7 @@
 	}	
 	body
 	{
-		background-image: url("purdue-fort-wayne-logo.jpg");
+		background-image: url("purdue-fort-wayne-logo.png");
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
 		background-color: black;
@@ -107,15 +107,23 @@
 	</div>
 	
 	<div class="tab black">
-	<form action="renewBookSuccess.jsp" method="post">
+	<form action="renewBookSuccess.jsp" method="post"> 
 		Book ISBN: <input type="text" name="isbn">
 		<input type="submit" name=" Renew ">
-	</form>	
+	</form> 
 	</div>
-
+	
 	<% // Start Java
 	
         try {
+        	
+        	String isbn = request.getParameter("isbn");
+        	
+        	if(isbn.isEmpty()) {
+            	response.sendRedirect("renewBookFail.jsp");
+        	}else {
+        		response.sendRedirect("renewBookSuccess.jsp");
+        	}
 	    // Connect to the database
 	    Class.forName("org.mariadb.jdbc.Driver");
 	    Connection con = DriverManager.getConnection("jdbc:mysql://localhost/library_books", "butters", "pass");

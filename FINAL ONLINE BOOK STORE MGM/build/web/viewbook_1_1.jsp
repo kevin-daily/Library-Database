@@ -163,7 +163,7 @@
         {
 			var books = "<%=bookPrint%>";
         	
-        	document.getElementById("book_list").readOnly = true;
+        	//document.getElementById("book_list").readOnly = true;
         	document.getElementById("book_list").value = books;
 			//var array_size = "<&index&>;
 			//document.getElementById("book_list").value = "INFORMATION";

@@ -28,7 +28,7 @@ CREATE TABLE users_tbl
      first_name  VARCHAR(100) NOT NULL, 
      last_name   VARCHAR(100) NOT NULL, 
      address     VARCHAR(100) NOT NULL, 
-     phone       INT unsigned NOT NULL, 
+     phone       BIGINT unsigned NOT NULL, 
      email       VARCHAR(100) NOT NULL,
      PRIMARY KEY (
 	user_number, 

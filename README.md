@@ -31,7 +31,7 @@ CREATE TABLE books_tbl ( book_number INT NOT NULL AUTO_INCREMENT,book_author VAR
 ```
 Create the table to hold the user information:
 ```
-CREATE TABLE users_tbl ( user_number INT NOT NULL AUTO_INCREMENT, username VARCHAR(50) NOT NULL, password VARCHAR(100) NOT NULL, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, address VARCHAR(100) NOT NULL, phone INT unsigned NOT NULL, email VARCHAR(100) NOT NULL, PRIMARY KEY( user_number,username,email ) );
+CREATE TABLE users_tbl ( user_number INT NOT NULL AUTO_INCREMENT, username VARCHAR(50) NOT NULL, password VARCHAR(100) NOT NULL, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, address VARCHAR(100) NOT NULL, phone BIGINT unsigned NOT NULL, email VARCHAR(100) NOT NULL, PRIMARY KEY( user_number,username,email ) );
 ```
 Create the table to hold the checked out books by users:
 ```

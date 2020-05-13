@@ -108,7 +108,7 @@
 	
 	<table class="tab hd red">
 		<tr>
-			<td>Book Successfully Renewed</td>
+			<td>Error: ISBN invalid or missing</td>
 		</tr>
 	</table>
 
